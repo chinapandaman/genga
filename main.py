@@ -75,6 +75,6 @@ if __name__ == "__main__":
     image_paths = os.path.join(os.path.dirname(__file__), "images")
     for i in range(len(os.listdir(image_paths))):
         _file_name = "frame_{}.png".format(i)
-        _image_path = os.path.join(image_paths, "frame")
+        _image_path = os.path.join(image_paths, _file_name)
         print("Outlining {}".format(_file_name))
         outline(_image_path)
