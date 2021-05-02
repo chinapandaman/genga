@@ -38,11 +38,16 @@ def extract_frames(file_name):
         if image is None:
             break
 
+        file_name = "frame_{}.png".format(count)
+
         cv2.imwrite(
-            os.path.join(os.path.dirname(__file__), "images", "frame_{}.png".format(count)),
+            os.path.join(os.path.dirname(__file__), "images", file_name),
             image
         )
+        print("Extracted {}".format(file_name))
         count += 1
+
+    return video.get(cv2.CAP_PROP_FPS)
 
 
 def outline(image_path):
@@ -57,3 +62,19 @@ def outline(image_path):
             if diff > 20:
                 out.putpixel((x, y), 0)
     out.save(image_path)
+
+
+if __name__ == "__main__":
+    print("Emptying frames.")
+    empty_frames()
+
+    print("Extracting frames.")
+    fps = extract_frames("")
+
+    print("Outlining frames.")
+    image_paths = os.path.join(os.path.dirname(__file__), "images")
+    for i in range(len(os.listdir(image_paths))):
+        _file_name = "frame_{}.png".format(i)
+        _image_path = os.path.join(image_paths, "frame")
+        print("Outlining {}".format(_file_name))
+        outline(_image_path)
