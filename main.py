@@ -5,7 +5,10 @@ import os
 import shutil
 
 import cv2
+import moviepy.editor as mpe
 from PIL import Image
+
+FILE_NAME = ""
 
 
 def empty_frames():
@@ -84,12 +87,34 @@ def export_to_video(_fps):
     out.release()
 
 
+def fix_audio():
+    audio_path = os.path.join(
+        os.path.dirname(__file__),
+        "input",
+        "audio.mp3"
+    )
+    audioclip = mpe.VideoFileClip(os.path.join(
+        os.path.dirname(__file__),
+        "input",
+        FILE_NAME
+    ))
+    audioclip.audio.write_audiofile(
+        audio_path
+    )
+    videoclip = mpe.VideoFileClip(os.path.join(os.path.dirname(__file__), "output", "output.avi"))
+    audio_background = mpe.AudioFileClip(audio_path)
+
+    new_audioclip = mpe.CompositeAudioClip([audio_background])
+    videoclip.audio = new_audioclip
+    videoclip.write_videofile(os.path.join(os.path.dirname(__file__), "output", "final.mp4"))
+
+
 if __name__ == "__main__":
     print("Emptying frames.")
     empty_frames()
 
     print("Extracting frames.")
-    fps = extract_frames("")
+    fps = extract_frames(FILE_NAME)
 
     print("Outlining frames.")
     image_paths = os.path.join(os.path.dirname(__file__), "images")
