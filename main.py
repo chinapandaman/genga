@@ -64,6 +64,25 @@ def outline(image_path):
     out.save(image_path)
 
 
+def export_to_video(_fps):
+    image_path = os.path.join(os.path.dirname(__file__), "images")
+    images = [os.path.join(image_path, "frame_{}.png".format(j)) for j in range(0, len(os.listdir(image_path)))]
+    frame = cv2.imread(images[0])
+    height, width, layers = frame.shape
+    out = cv2.VideoWriter(
+        os.path.join(os.path.dirname(__file__), "output", "output.mp4"),
+        0,
+        _fps,
+        (width, height)
+    )
+    for image in images:
+        im = cv2.imread(image)
+        out.write(im)
+
+    cv2.destroyAllWindows()
+    out.release()
+
+
 if __name__ == "__main__":
     print("Emptying frames.")
     empty_frames()
@@ -78,3 +97,6 @@ if __name__ == "__main__":
         _image_path = os.path.join(image_paths, _file_name)
         print("Outlining {}".format(_file_name))
         outline(_image_path)
+
+    print("Exporting to output video.")
+    export_to_video(fps)
