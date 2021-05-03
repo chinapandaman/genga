@@ -126,3 +126,6 @@ if __name__ == "__main__":
 
     print("Exporting to output video.")
     export_to_video(fps)
+
+    print("Fixing audio.")
+    fix_audio()
