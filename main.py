@@ -70,12 +70,13 @@ def export_to_video(_fps):
     frame = cv2.imread(images[0])
     height, width, layers = frame.shape
     out = cv2.VideoWriter(
-        os.path.join(os.path.dirname(__file__), "output", "output.mp4"),
+        os.path.join(os.path.dirname(__file__), "output", "output.avi"),
         0,
         _fps,
         (width, height)
     )
-    for image in images:
+    for counter, image in enumerate(images):
+        print("Processing frame_{}.png".format(counter))
         im = cv2.imread(image)
         out.write(im)
 
