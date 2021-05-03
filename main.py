@@ -59,7 +59,7 @@ def outline(image_path):
             r1, g1, b1 = image.getpixel((x, y))
             r2, g2, b2 = image.getpixel((x - 1, y - 1))
             diff = math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2)
-            if diff > 20:
+            if diff > 5:
                 out.putpixel((x, y), 0)
     out.save(image_path)
 
