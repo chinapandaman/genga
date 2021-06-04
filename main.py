@@ -11,9 +11,11 @@ from PIL import Image
 FILE_NAME = ""
 
 
-def empty_frames():
-    path = os.path.join(os.path.dirname(__file__), "images")
+def cleanup(folder):
+    path = os.path.join(os.path.dirname(__file__), folder)
     for file_name in os.listdir(path):
+        if file_name == "final.mp4":
+            continue
         file_path = os.path.join(path, file_name)
         try:
             if os.path.isfile(file_path) or os.path.islink(file_path):
@@ -110,9 +112,6 @@ def fix_audio():
 
 
 if __name__ == "__main__":
-    print("Emptying frames.")
-    empty_frames()
-
     print("Extracting frames.")
     fps = extract_frames(FILE_NAME)
 
@@ -129,3 +128,8 @@ if __name__ == "__main__":
 
     print("Fixing audio.")
     fix_audio()
+
+    print("Cleaning up.")
+    cleanup("input")
+    cleanup("images")
+    cleanup("output")
