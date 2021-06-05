@@ -130,6 +130,5 @@ if __name__ == "__main__":
     fix_audio()
 
     print("Cleaning up.")
-    cleanup("input")
     cleanup("images")
     cleanup("output")
