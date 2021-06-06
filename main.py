@@ -14,7 +14,7 @@ FILE_NAME = ""
 def cleanup(folder):
     path = os.path.join(os.path.dirname(__file__), folder)
     for file_name in os.listdir(path):
-        if file_name == "final.mp4":
+        if file_name in ["final.mp4", FILE_NAME]:
             continue
         file_path = os.path.join(path, file_name)
         try:
@@ -130,5 +130,6 @@ if __name__ == "__main__":
     fix_audio()
 
     print("Cleaning up.")
+    cleanup("input")
     cleanup("images")
     cleanup("output")
