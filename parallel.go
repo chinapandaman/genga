@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-const POOL = 10
+const POOL = 20
 
 func main() {
 	batch := make(map[int][]int)

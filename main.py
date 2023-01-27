@@ -1,27 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
-import shutil
 import sys
 import json
 
 import cv2
 import moviepy.editor as mpe
-
-
-def cleanup(folder, file_name):
-    path = os.path.join(os.path.dirname(__file__), folder)
-    for file_name in os.listdir(path):
-        if file_name in ["final.mp4", file_name]:
-            continue
-        file_path = os.path.join(path, file_name)
-        try:
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
 def extract_frames(file_name):
@@ -99,9 +83,6 @@ if __name__ == "__main__":
     file_name = sys.argv[1]
     action = sys.argv[2]
     if action == "extract":
-        cleanup("input", file_name)
-        cleanup("images", file_name)
-        cleanup("output", file_name)
         print("Extracting frames.")
         fps = extract_frames(file_name)
         data = {"fps": fps}
@@ -109,7 +90,7 @@ if __name__ == "__main__":
             json.dump(data, f)
 
 
-    elif action == "export":
+    elif action == "write":
         with open(os.path.join(os.path.dirname(__file__), "input", "fps.json"), "r") as f:
             data = json.load(f)
         print("Exporting to output video.")
@@ -117,8 +98,3 @@ if __name__ == "__main__":
 
         print("Fixing audio.")
         fix_audio(file_name)
-
-        print("Cleaning up.")
-        cleanup("input", file_name)
-        cleanup("images", file_name)
-        cleanup("output", file_name)
