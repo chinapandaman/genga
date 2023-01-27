@@ -2,14 +2,31 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"sync"
 	"os/exec"
 )
+
+const POOL = 10
 
 func main() {
 	batch := make(map[int][]int)
 	batch[0] = []int{1, 2, 3, 4, 5}
 	batch[1] = []int{6, 7, 8, 9, 10}
+
+	files, _ := ioutil.ReadDir("./images")
+
+	counter := 0
+	for i := 0; i < len(files); i += POOL {
+		end := i + POOL
+
+		if end > len(files) {
+			end = len(files)
+		}
+
+		batch[counter] = makeRange(i, end - 1)
+		counter += 1
+	}
 
 	ch := make(chan []int, 1)
 
@@ -42,4 +59,12 @@ func main() {
 
 		wg.Wait()
 	}
+}
+
+func makeRange(min, max int) []int {
+	a := make([]int, max-min+1)
+	for i := range a {
+		a[i] = min + i
+	}
+	return a
 }
