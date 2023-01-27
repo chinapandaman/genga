@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 
-import math
 import os
 import shutil
+import sys
+import json
 
 import cv2
 import moviepy.editor as mpe
-from PIL import Image
-
-FILE_NAME = ""
 
 
-def cleanup(folder):
+def cleanup(folder, file_name):
     path = os.path.join(os.path.dirname(__file__), folder)
     for file_name in os.listdir(path):
-        if file_name in ["final.mp4", FILE_NAME]:
+        if file_name in ["final.mp4", file_name]:
             continue
         file_path = os.path.join(path, file_name)
         try:
@@ -55,20 +53,6 @@ def extract_frames(file_name):
     return video.get(cv2.CAP_PROP_FPS)
 
 
-def outline(image_path):
-    image = Image.open(image_path)
-    out = Image.new("I", image.size, 0xffffff)
-    width, height = image.size
-    for x in range(1, width):
-        for y in range(1, height):
-            r1, g1, b1 = image.getpixel((x, y))
-            r2, g2, b2 = image.getpixel((x - 1, y - 1))
-            diff = math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2)
-            if diff > 5:
-                out.putpixel((x, y), 0)
-    out.save(image_path)
-
-
 def export_to_video(_fps):
     image_path = os.path.join(os.path.dirname(__file__), "images")
     images = [os.path.join(image_path, "frame_{}.png".format(j)) for j in range(0, len(os.listdir(image_path)))]
@@ -89,7 +73,7 @@ def export_to_video(_fps):
     out.release()
 
 
-def fix_audio():
+def fix_audio(file_name):
     audio_path = os.path.join(
         os.path.dirname(__file__),
         "input",
@@ -98,7 +82,7 @@ def fix_audio():
     audioclip = mpe.VideoFileClip(os.path.join(
         os.path.dirname(__file__),
         "input",
-        FILE_NAME
+        file_name
     ))
     audioclip.audio.write_audiofile(
         audio_path
@@ -112,24 +96,29 @@ def fix_audio():
 
 
 if __name__ == "__main__":
-    print("Extracting frames.")
-    fps = extract_frames(FILE_NAME)
+    file_name = sys.argv[1]
+    action = sys.argv[2]
+    if action == "extract":
+        cleanup("input", file_name)
+        cleanup("images", file_name)
+        cleanup("output", file_name)
+        print("Extracting frames.")
+        fps = extract_frames(file_name)
+        data = {"fps": fps}
+        with open(os.path.join(os.path.dirname(__file__), "input", "fps.json"), "w") as f:
+            json.dump(data, f)
 
-    print("Outlining frames.")
-    image_paths = os.path.join(os.path.dirname(__file__), "images")
-    for i in range(len(os.listdir(image_paths))):
-        _file_name = "frame_{}.png".format(i)
-        _image_path = os.path.join(image_paths, _file_name)
-        print("Outlining {}".format(_file_name))
-        outline(_image_path)
 
-    print("Exporting to output video.")
-    export_to_video(fps)
+    elif action == "export":
+        with open(os.path.join(os.path.dirname(__file__), "input", "fps.json"), "r") as f:
+            data = json.load(f)
+        print("Exporting to output video.")
+        export_to_video(data["fps"])
 
-    print("Fixing audio.")
-    fix_audio()
+        print("Fixing audio.")
+        fix_audio(file_name)
 
-    print("Cleaning up.")
-    cleanup("input")
-    cleanup("images")
-    cleanup("output")
+        print("Cleaning up.")
+        cleanup("input", file_name)
+        cleanup("images", file_name)
+        cleanup("output", file_name)
