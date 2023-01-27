@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-const POOL = 20
+const POOL_SIZE = 16
 
 func main() {
 	batch := make(map[int][]int)
@@ -17,8 +17,8 @@ func main() {
 	files, _ := ioutil.ReadDir("./images")
 
 	counter := 0
-	for i := 0; i < len(files); i += POOL {
-		end := i + POOL
+	for i := 0; i < len(files); i += POOL_SIZE {
+		end := i + POOL_SIZE
 
 		if end > len(files) {
 			end = len(files)
