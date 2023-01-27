@@ -27,10 +27,10 @@ func main() {
 			wg.Add(1)
 
 			go func(each int){
-				file_name := fmt.Sprintf("frame_%d.png", each)
+				file_name := fmt.Sprintf("./images/frame_%d.png", each)
 				cmd := exec.Command("python", "outline.py", file_name)
-				fmt.Println(cmd)
 
+				fmt.Println("Outlining", file_name)
 				err := cmd.Run()
 
 				if err != nil {
