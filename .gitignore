@@ -4,3 +4,5 @@ input/
 images/
 output/
 venv/
+*.swp
+*.png
