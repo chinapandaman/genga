@@ -3,11 +3,12 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"sync"
 	"os/exec"
+	"sync"
+	"runtime"
 )
 
-const POOL_SIZE = 16
+const POOL_SIZE_MULTIPLIER = 1
 
 func main() {
 	batch := make(map[int][]int)
@@ -17,14 +18,15 @@ func main() {
 	files, _ := ioutil.ReadDir("./images")
 
 	counter := 0
-	for i := 0; i < len(files); i += POOL_SIZE {
-		end := i + POOL_SIZE
+	pool_size := POOL_SIZE_MULTIPLIER * runtime.NumCPU()
+	for i := 0; i < len(files); i += pool_size {
+		end := i + pool_size
 
 		if end > len(files) {
 			end = len(files)
 		}
 
-		batch[counter] = makeRange(i, end - 1)
+		batch[counter] = makeRange(i, end-1)
 		counter += 1
 	}
 
@@ -43,7 +45,7 @@ func main() {
 		for _, each := range list {
 			wg.Add(1)
 
-			go func(each int){
+			go func(each int) {
 				file_name := fmt.Sprintf("./images/frame_%d.png", each)
 				cmd := exec.Command("python", "outline.py", file_name)
 

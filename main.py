@@ -8,12 +8,12 @@ import cv2
 import moviepy.editor as mpe
 
 
-def extract_frames(file_name):
+def extract_frames(fn):
     video = cv2.VideoCapture(
         os.path.join(
             os.path.dirname(__file__),
             "input",
-            file_name
+            fn
         )
     )
 
@@ -25,13 +25,13 @@ def extract_frames(file_name):
         if image is None:
             break
 
-        file_name = "frame_{}.png".format(count)
+        fn = "frame_{}.png".format(count)
 
         cv2.imwrite(
-            os.path.join(os.path.dirname(__file__), "images", file_name),
+            os.path.join(os.path.dirname(__file__), "images", fn),
             image
         )
-        print("Extracted {}".format(file_name))
+        print("Extracted {}".format(fn))
         count += 1
 
     return video.get(cv2.CAP_PROP_FPS)
@@ -57,7 +57,7 @@ def export_to_video(_fps):
     out.release()
 
 
-def fix_audio(file_name):
+def fix_audio(fn):
     audio_path = os.path.join(
         os.path.dirname(__file__),
         "input",
@@ -66,7 +66,7 @@ def fix_audio(file_name):
     audioclip = mpe.VideoFileClip(os.path.join(
         os.path.dirname(__file__),
         "input",
-        file_name
+        fn
     ))
     audioclip.audio.write_audiofile(
         audio_path
@@ -88,8 +88,6 @@ if __name__ == "__main__":
         data = {"fps": fps}
         with open(os.path.join(os.path.dirname(__file__), "input", "fps.json"), "w") as f:
             json.dump(data, f)
-
-
     elif action == "write":
         with open(os.path.join(os.path.dirname(__file__), "input", "fps.json"), "r") as f:
             data = json.load(f)

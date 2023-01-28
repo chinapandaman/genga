@@ -3,8 +3,8 @@ import math
 from PIL import Image
 
 
-def outline(image_path):
-    image = Image.open(image_path)
+def outline(img):
+    image = Image.open(img)
     out = Image.new("I", image.size, 0xffffff)
     width, height = image.size
     for x in range(1, width):
@@ -14,8 +14,7 @@ def outline(image_path):
             diff = math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2)
             if diff > 5:
                 out.putpixel((x, y), 0)
-    out.save(image_path)
-
+    out.save(img)
 
 
 if __name__ == "__main__":
